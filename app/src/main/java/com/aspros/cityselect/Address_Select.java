@@ -26,6 +26,7 @@ public class Address_Select extends Activity implements AdapterView.OnItemSelect
 
     private DatabaseHelper dbHelp;
     private SQLiteDatabase db;
+
     private List<provinceInfo> provinceList = new ArrayList<provinceInfo>();
     private List<cityInfo> cityList = new ArrayList<cityInfo>();
     private List<areaInfo> areaList = new ArrayList<areaInfo>();
@@ -48,20 +49,22 @@ public class Address_Select extends Activity implements AdapterView.OnItemSelect
         spinnerArea = (Spinner) findViewById(R.id.area);
 
 
-
+        //加载城市
         ArrayAdapter<provinceInfo> adapter = new ArrayAdapter<provinceInfo>(this, R.layout.support_simple_spinner_dropdown_item, getProvinceList());
         spinnerProvince.setAdapter(adapter);
+//        设置默认选项
 //        spinnerProvince.setSelection(0, true);
         spinnerProvince.setOnItemSelectedListener(this);
-
+        //某些直辖市可能没有区县，默认加载北京，先隐藏区县选项
         spinnerArea.setVisibility(View.INVISIBLE);
-
+        //监听确定按钮点击事件
         findViewById(R.id.back_address).setOnClickListener(this);
     }
 
     private String provinceId = null;
     private String cityId = null;
 
+    //监听选项事件
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         switch (parent.getId()) {
@@ -74,15 +77,13 @@ public class Address_Select extends Activity implements AdapterView.OnItemSelect
                 break;
             case R.id.city:
                 cityId = cityList.get(position).getId();
-                Toast.makeText(Address_Select.this, getAreaList(provinceId, cityId).size()+"", Toast.LENGTH_SHORT).show();
-                if(getAreaList(provinceId, cityId).size()>0) {
-
+//                Toast.makeText(Address_Select.this, getAreaList(provinceId, cityId).size()+"", Toast.LENGTH_SHORT).show();
+                if (getAreaList(provinceId, cityId).size() > 0) {
                     spinnerArea.setVisibility(View.VISIBLE);
 
                     ArrayAdapter<areaInfo> areaAdapter = new ArrayAdapter<areaInfo>(this, R.layout.support_simple_spinner_dropdown_item, getAreaList(provinceId, cityId));
                     spinnerArea.setAdapter(areaAdapter);
-                }else
-                {
+                } else {
                     spinnerArea.setVisibility(View.INVISIBLE);
                 }
                 break;
@@ -94,7 +95,7 @@ public class Address_Select extends Activity implements AdapterView.OnItemSelect
 
     }
 
-
+    //加载城市数据
     private List<provinceInfo> getProvinceList() {
         Cursor cursor = db.rawQuery("select * from province", null);
         while (cursor.moveToNext()) {
@@ -109,6 +110,7 @@ public class Address_Select extends Activity implements AdapterView.OnItemSelect
         return provinceList;
     }
 
+    //根据省份id获取城市
     private List<cityInfo> getCityList(String provinceId) {
         cityList = new ArrayList<cityInfo>();
         Cursor cursor = db.rawQuery("select * from city where provinceId=?", new String[]{provinceId});
@@ -124,6 +126,7 @@ public class Address_Select extends Activity implements AdapterView.OnItemSelect
         return cityList;
     }
 
+    //根据省份id和城市id获取区县
     private List<areaInfo> getAreaList(String provinceId, String cityId) {
         areaList = new ArrayList<areaInfo>();
         if (provinceId != null && cityId != null) {
@@ -184,6 +187,7 @@ public class Address_Select extends Activity implements AdapterView.OnItemSelect
             return id;
         }
 
+        //重写toString方法填充数据到下拉框
         @Override
         public String toString() {
             return provinceName;

@@ -14,6 +14,7 @@ import android.widget.Toast;
  */
 public class LoadDataService extends IntentService {
     private StringBuilder sb;
+
     private DatabaseHelper dbHelp;
     private SQLiteDatabase db;
     private String countryName;
@@ -25,21 +26,22 @@ public class LoadDataService extends IntentService {
     private String areaName;
     private String areaCode;
 
-    private Context mContext;
-    public LoadDataService(){
+
+    public LoadDataService() {
         super("LoadDataService");
     }
-    public LoadDataService(Context context){
-        super("LoadDataService");
-        mContext=context;
-    }
+
+
     @Override
     protected void onHandleIntent(Intent intent) {
         dbHelp = new DatabaseHelper(this, "countryList.db", null, 1);
         db = dbHelp.getWritableDatabase();
         try {
             //实例化StringBuilder
-            sb = new StringBuilder("");
+//            sb = new StringBuilder("");
+
+            /*XML解析数据*/
+
             //得到Resources资源
             Resources r = getResources();
             //通过Resources，获得XmlResourceParser实例
@@ -66,22 +68,22 @@ public class LoadDataService extends IntentService {
                     if (name.equals("Region")) {
                         areaCode = xrp.getAttributeValue(null, "Code");
                         areaName = xrp.getAttributeValue(null, "Name");
-                        db.execSQL("insert into area values(?,?,?,?)", new String[]{areaCode,provinceCode,cityCode, areaName});
+                        db.execSQL("insert into area values(?,?,?,?)", new String[]{areaCode, provinceCode, cityCode, areaName});
                     }
-                    sb.append(countryName + countryCode + "\n" + provinceName + provinceCode + "\n" + cityName + cityCode + "\n" + areaName + areaCode + "\n");
+//                    sb.append(countryName + countryCode + "\n" + provinceName + provinceCode + "\n" + cityName + cityCode + "\n" + areaName + areaCode + "\n");
                 }
                 xrp.next();
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-//            Toast.makeText(MainActivity.this, "data has be done", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        //数据加载完成后，弹窗提示
         Toast.makeText(LoadDataService.this, "LoadData Finished", Toast.LENGTH_SHORT).show();
 
     }

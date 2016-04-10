@@ -36,16 +36,17 @@ public class MainActivity extends AppCompatActivity {
         cityShow = (TextView) findViewById(R.id.showCity);
         address_show= (TextView) findViewById(R.id.address_show);
 
-//        findViewById(R.id.select_address).setEnabled(false);
-
+        //点击选择详细地址
         findViewById(R.id.select_address).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i=new Intent(MainActivity.this,Address_Select.class);
+                //返回数据
                 startActivityForResult(i,1);
             }
         });
 
+        //启动后台服务加载数据
         Intent is=new Intent(this,LoadDataService.class);
         startService(is);
 
@@ -60,48 +61,48 @@ public class MainActivity extends AppCompatActivity {
 //        });
     }
 
-    private void parseXML() {
-        try {
-            //实例化StringBuilder
-            sb = new StringBuilder("");
-            //得到Resources资源
-            Resources r = getResources();
-            //通过Resources，获得XmlResourceParser实例
-            XmlResourceParser xrp = r.getXml(R.xml.loclist);
-            while (xrp.getEventType() != XmlResourceParser.END_DOCUMENT) {
-                if (xrp.getEventType() == XmlResourceParser.START_TAG) {
-                    String name = xrp.getName();
-                    if (name.equals("CountryRegion")) {
-                        countryName = xrp.getAttributeValue(null, "Name");
-                        countryCode = xrp.getAttributeValue(null, "Code");
-                    db.execSQL("insert into country values(?,?)", new String[]{countryCode, countryName});
-                    }
-                    if (name.equals("State")) {
-                        provinceCode = xrp.getAttributeValue(null, "Code");
-                        provinceName = xrp.getAttributeValue(null, "Name");
-                    db.execSQL("insert into province values(?,?,?)", new String[]{provinceCode, countryCode, provinceName});
-
-                    }
-                    if (name.equals("City")) {
-                        cityCode = xrp.getAttributeValue(null, "Code");
-                        cityName = xrp.getAttributeValue(null, "Name");
-                    db.execSQL("insert into city values(?,?,?)", new String[]{cityCode, provinceCode, cityName});
-                    }
-                    if (name.equals("Region")) {
-                        areaCode = xrp.getAttributeValue(null, "Code");
-                        areaName = xrp.getAttributeValue(null, "Name");
-                    db.execSQL("insert into area values(?,?,?,?)", new String[]{areaCode,provinceCode,cityCode, areaName});
-                    }
-                    sb.append(countryName + countryCode + "\n" + provinceName + provinceCode + "\n" + cityName + cityCode + "\n" + areaName + areaCode + "\n");
-                }
-                xrp.next();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-//            Toast.makeText(MainActivity.this, "data has be done", Toast.LENGTH_SHORT).show();
-        }
-    }
+//    private void parseXML() {
+//        try {
+//            //实例化StringBuilder
+//            sb = new StringBuilder("");
+//            //得到Resources资源
+//            Resources r = getResources();
+//            //通过Resources，获得XmlResourceParser实例
+//            XmlResourceParser xrp = r.getXml(R.xml.loclist);
+//            while (xrp.getEventType() != XmlResourceParser.END_DOCUMENT) {
+//                if (xrp.getEventType() == XmlResourceParser.START_TAG) {
+//                    String name = xrp.getName();
+//                    if (name.equals("CountryRegion")) {
+//                        countryName = xrp.getAttributeValue(null, "Name");
+//                        countryCode = xrp.getAttributeValue(null, "Code");
+//                    db.execSQL("insert into country values(?,?)", new String[]{countryCode, countryName});
+//                    }
+//                    if (name.equals("State")) {
+//                        provinceCode = xrp.getAttributeValue(null, "Code");
+//                        provinceName = xrp.getAttributeValue(null, "Name");
+//                    db.execSQL("insert into province values(?,?,?)", new String[]{provinceCode, countryCode, provinceName});
+//
+//                    }
+//                    if (name.equals("City")) {
+//                        cityCode = xrp.getAttributeValue(null, "Code");
+//                        cityName = xrp.getAttributeValue(null, "Name");
+//                    db.execSQL("insert into city values(?,?,?)", new String[]{cityCode, provinceCode, cityName});
+//                    }
+//                    if (name.equals("Region")) {
+//                        areaCode = xrp.getAttributeValue(null, "Code");
+//                        areaName = xrp.getAttributeValue(null, "Name");
+//                    db.execSQL("insert into area values(?,?,?,?)", new String[]{areaCode,provinceCode,cityCode, areaName});
+//                    }
+//                    sb.append(countryName + countryCode + "\n" + provinceName + provinceCode + "\n" + cityName + cityCode + "\n" + areaName + areaCode + "\n");
+//                }
+//                xrp.next();
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+////            Toast.makeText(MainActivity.this, "data has be done", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

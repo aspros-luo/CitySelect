@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * Created by Aspros on 16/4/9.
+ * 创建数据库
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_COUNTRY = "CREATE TABLE  country  ( " +
